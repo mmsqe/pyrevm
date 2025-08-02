@@ -175,6 +175,7 @@ class EVM:
         gas_limit: int = 2**64 - 1,
         tracing: bool = False,
         spec_id="SHANGHAI",
+        with_memory: bool = False,
     ) -> "EVM":
         """
         Creates a new EVM instance.
@@ -185,6 +186,7 @@ class EVM:
         :param gas_limit: The gas limit.
         :param tracing: Whether to enable tracing.
         :param spec_id: The spec ID.
+        :param with_memory: Whether traces include memory.
         """
 
     def snapshot(self: "EVM") -> JournalCheckpoint: ...
@@ -303,6 +305,14 @@ class EVM:
     @tracing.setter
     def set_tracing(self: "EVM", value: bool) -> None:
         """ Set whether tracing is enabled. """
+
+    @property
+    def with_memory(self: "EVM") -> bool:
+        """ Whether traces include memory. """
+
+    @with_memory.setter
+    def set_with_memory(self: "EVM", value: bool) -> None:
+        """ Set whether traces include memory. """
 
     @property
     def result(self: "EVM") -> Optional[ExecutionResult]:

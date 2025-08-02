@@ -40,6 +40,10 @@ pub struct EVM {
     #[pyo3(get, set)]
     tracing: bool,
 
+    /// whether to include memory field in the tracing output
+    #[pyo3(get, set)]
+    with_memory: bool,
+
     /// Checkpoints for reverting state
     /// We cannot use Revm's checkpointing mechanism as it is not serializable
     checkpoints: HashMap<JournalCheckpoint, RevmCheckpoint>,
@@ -52,7 +56,7 @@ pub struct EVM {
 impl EVM {
     /// Create a new EVM instance.
     #[new]
-    #[pyo3(signature = (env = None, fork_url = None, fork_block = None, gas_limit = 18446744073709551615, tracing = false, spec_id = "LATEST")
+    #[pyo3(signature = (env = None, fork_url = None, fork_block = None, gas_limit = 18446744073709551615, tracing = false, spec_id = "LATEST", with_memory = false)
     )]
     fn new(
         env: Option<Env>,
@@ -61,6 +65,7 @@ impl EVM {
         gas_limit: u64,
         tracing: bool,
         spec_id: &str,
+        with_memory: bool,
     ) -> PyResult<Self> {
         let spec = SpecId::from(spec_id);
         let env = env.unwrap_or_default().into();
@@ -74,6 +79,7 @@ impl EVM {
             gas_limit: U256::from(gas_limit),
             handler_cfg: HandlerCfg::new(spec),
             tracing,
+            with_memory,
             checkpoints: HashMap::new(),
             result: None,
         })
@@ -412,6 +418,7 @@ impl EVM {
             evm_context,
             self.handler_cfg,
             self.tracing,
+            self.with_memory,
             is_static,
             is_message_call,
         );

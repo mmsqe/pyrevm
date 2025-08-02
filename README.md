@@ -58,6 +58,7 @@ There is also support for tracing:
 from pyrevm import EVM
 
 EVM(tracing=True)
+EVM(tracing=True, with_memory=True)  # traces include memory
 ```
 
 ### Transactions

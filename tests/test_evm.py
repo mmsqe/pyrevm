@@ -230,8 +230,9 @@ def test_call_empty_result(kwargs):
     assert not evm.tracing
 
 
-def test_tracing(capsys):
-    evm = EVM(tracing=True)
+@pytest.mark.parametrize("with_memory", [False, True])
+def test_tracing(capsys, with_memory):
+    evm = EVM(tracing=True, with_memory=with_memory)
     evm.insert_account_info(address, AccountInfo(code=load_contract_bin("weth_9.bin")))
     evm.set_balance(address2, 10000)
     evm.message_call(
@@ -252,6 +253,7 @@ def test_tracing(capsys):
     }
     assert expected == traces[-1]
     assert len(traces) == 128
+    assert all(("memory" in step) == with_memory for step in traces[:-1])
 
 
 def test_blueprint():
